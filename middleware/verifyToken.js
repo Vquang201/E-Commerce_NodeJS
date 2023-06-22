@@ -27,7 +27,6 @@ const isAdmin = (req, res, next) => {
     if (role !== 'admin') {
         return res.status(403).json({ mess: 'require role is admin' })
     }
-    console.log('usser');
 
     next()
 }
