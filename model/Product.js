@@ -34,8 +34,12 @@ var Product = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    images: {
-        type: Array
+    image: {
+        type: String,
+        require: true
+    },
+    file_name: {
+        type: String
     },
     color: {
         type: String,

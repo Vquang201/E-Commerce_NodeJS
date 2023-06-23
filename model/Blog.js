@@ -57,7 +57,7 @@ var Blog = new mongoose.Schema({
     }
 
 }, {
-    timestamps,
+    timestamps: true,
     // toJSON: { virtuals: true },
     // toObject: { virtuals: true }
 })

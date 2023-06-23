@@ -1,5 +1,6 @@
 const slugify = require('slugify')
 const Product = require('../model/Product')
+const cloudinary = require('cloudinary')
 require('dotenv').config()
 
 class ProductController {
@@ -49,18 +50,33 @@ class ProductController {
     async createProduct(req, res) {
         try {
             if (Object.keys(req.body).length === 0) {
+                if (req.file.path) {
+                    cloudinary.uploader.destroy(req.file.filename, (err, result) => {
+                        if (err) {
+                            console.log({ err: err })
+                        }
+                    })
+                }
                 return res.status(400).json({ mess: 'Missing Inputs' })
+
             }
 
             if (req.body.title) {
                 req.body.slug = slugify(req.body.title)
             }
 
-            const product = await new Product(req.body)
+            const product = await new Product({ ...req.body, image: req.file?.path })
             await product.save()
             res.status(200).json(product)
 
         } catch (error) {
+            if (req.file.path) {
+                cloudinary.uploader.destroy(req.file.filename, (err, result) => {
+                    if (err) {
+                        console.log({ err: err })
+                    }
+                })
+            }
             return res.status(500).json({ mess: error })
         }
     }
@@ -68,7 +84,14 @@ class ProductController {
     // [PUT] /update-product/:id
     async updateProduct(req, res) {
         try {
-            if (Object.keys(req.body).length === 0) {
+            if (Object.keys(req.body).length === 0 && !req.file) {
+
+                cloudinary.uploader.destroy(req.file.filename, (err, result) => {
+                    if (err) {
+                        console.log({ err: err })
+                    }
+                })
+
                 return res.status(400).json({ mess: 'Missing Inputs' })
             }
 
@@ -76,12 +99,22 @@ class ProductController {
                 req.body.slug = slugify(req.body.title)
             }
 
-            await Product.findByIdAndUpdate({ _id: req.params.id }, req.body)
-            res.status(200).json({ mess: 'update successfully' })
+            if (req.file.path) {
+                req.body.image = req.file.path
+            }
 
-            // await 
+            await Product.findByIdAndUpdate({ _id: req.params.id }, req.body)
+            res.status(200).json({ mess: 'update successfully', Product })
+
 
         } catch (error) {
+            if (req.file.path) {
+                cloudinary.uploader.destroy(req.file.filename, (err, result) => {
+                    if (err) {
+                        console.log({ err: err })
+                    }
+                })
+            }
             return res.status(500).json({ mess: error })
         }
     }
@@ -104,17 +137,14 @@ class ProductController {
 
 
             const product = await Product.findById({ _id: postId })
-            console.log(_id);
             const readyRating = product?.ratings?.find(e => e?.postedBy.toString() === _id)
-            console.log(readyRating)
-
 
             if (readyRating) {
                 // Update star and comment
                 await Product.updateOne(
                     { ratings: { $elemMatch: readyRating } },
-                    // { $set: { "ratings.$.star": star, "ratings.$.comment": comment } }
-                    { $set: { ratings: { postedBy: _id, star, comment } } }
+                    { $set: { "ratings.$.star": star, "ratings.$.comment": comment } }
+                    // { $set: { ratings: { postedBy: _id, star, comment } }}
                 )
             } else {
                 // add new star and comment
@@ -124,11 +154,17 @@ class ProductController {
                 )
             }
 
+            // sum star
+            const postCurrent = await Product.findById({ _id: postId })
+            const len = postCurrent.ratings.length
+            const count = postCurrent.ratings.reduce((sum, e) => sum + e.star, 0)
+            postCurrent.totalRatings = (count / len).toFixed(1)
 
-
+            await postCurrent.save()
 
             res.status(200).json({
-                mess: 'rating successfully !!'
+                mess: 'rating successfully !!',
+                product
             })
 
         } catch (error) {
