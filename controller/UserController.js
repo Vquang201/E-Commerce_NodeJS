@@ -58,6 +58,54 @@ class UserController {
         }
     }
 
+    // [PUT] /users/cart
+    async updateCart(req, res) {
+        try {
+            const { _id } = req.user
+            const { pid, quatily, color } = req.body
+
+            if (Object.keys(req.body).length === 0) {
+                return res.status(400).json('Missing inputs')
+            }
+
+            const user = await User.findById({ _id }).select('cart')
+            // check xem có sản phẩm trong giỏ hàng chưa
+            const readyProduct = user?.cart?.find(e => e.product.toString() === pid)
+
+            if (readyProduct) {
+                return res.status(200).json({ mess: 'This product is already in the cart!' })
+            } else {
+                console.log(_id);
+                await User.findByIdAndUpdate(
+                    _id,
+                    { $push: { cart: { product: pid, quatily, color } } }
+                )
+                return res.status(200).json({ mess: ' add to cart successfully !' })
+            }
+
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
+
+    //[PUT] /users/delete-cart
+    async deleteCart(req, res) {
+        try {
+            const { _id } = req.user
+            const { pid } = req.body
+
+            //Tiến hành remove product
+            await User.findByIdAndUpdate(_id, { $pull: { cart: { product: pid } } })
+            res.status(200).json({ mess: 'remove product successfully!' })
+
+
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
+
+
+
 }
 
 module.exports = new UserController
