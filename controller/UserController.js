@@ -62,7 +62,7 @@ class UserController {
     async updateCart(req, res) {
         try {
             const { _id } = req.user
-            const { pid, quatily, color } = req.body
+            const { pid, quatity, color } = req.body
 
             if (Object.keys(req.body).length === 0) {
                 return res.status(400).json('Missing inputs')
@@ -75,10 +75,9 @@ class UserController {
             if (readyProduct) {
                 return res.status(200).json({ mess: 'This product is already in the cart!' })
             } else {
-                console.log(_id);
                 await User.findByIdAndUpdate(
                     _id,
-                    { $push: { cart: { product: pid, quatily, color } } }
+                    { $push: { cart: { product: pid, quatity, color } } }
                 )
                 return res.status(200).json({ mess: ' add to cart successfully !' })
             }

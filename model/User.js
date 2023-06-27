@@ -45,21 +45,15 @@ var User = new mongoose.Schema({
     ],
 
     address: {
-        type: Array,
-        default: []
+        type: String
     },
 
     wishlist: [
         {
             type: mongoose.Types.ObjectId,
-            ref: 'product'
+            ref: 'Product'
         }
     ],
-
-    isBlocked: {
-        type: Boolean,
-        default: false
-    },
 
     refresh_token: {
         type: String

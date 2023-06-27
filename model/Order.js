@@ -8,7 +8,7 @@ var Order = new mongoose.Schema({
                 type: mongoose.Types.ObjectId,
                 ref: 'Product'
             },
-            count: Number,
+            total: Number,
             color: String
         }
     ],
@@ -17,9 +17,7 @@ var Order = new mongoose.Schema({
         default: 'Processing',
         enum: ['Cancelled ', 'Processing', 'Successed']
     },
-    paymentIntent: {
 
-    },
     orderBy: {
         type: mongoose.Types.ObjectId,
         ref: 'User'

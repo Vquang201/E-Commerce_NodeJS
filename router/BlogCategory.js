@@ -1,5 +1,4 @@
 const BlogCategoryController = require('../controller/BlogCategoryController')
-const uploadCloudinary = require('../middleware/uploader')
 const { verifyToken, isAdmin } = require('../middleware/verifyToken')
 const router = require('express').Router()
 
