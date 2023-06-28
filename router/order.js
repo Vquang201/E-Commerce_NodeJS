@@ -4,7 +4,7 @@ const router = require('express').Router()
 
 router.get('/', verifyToken, OrderController.getOrders)
 router.post('/', verifyToken, OrderController.createOrder)
-// router.put('/update-status', [verifyToken, isAdmin], OrderController.updateStatus)
+router.put('/update-status/:oid', [verifyToken, isAdmin], OrderController.updateStatus)
 
 
 
