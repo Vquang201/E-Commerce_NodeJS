@@ -134,8 +134,24 @@ class AuthController {
             refreshTokens = refreshTokens.filter((token) => token !== refreshToken)
 
             //CREATE NEW ACCESS TOKEN  ,REFRESH TOKEN
-            const newAccessToken = authController.generateAccessToken(user)
-            const newRefreshToken = authController.generateRefreshToken(user)
+            const newAccessToken = jwt.sign(
+                {
+                    _id: user.id,
+                    email: user.email,
+                    role: user.role
+                },
+                process.env.ACCESS_TOKEN,
+                { expiresIn: '7d' }
+            )
+
+            const newRefreshToken = jwt.sign(
+                {
+                    email: user.email,
+                    role: user.role
+                },
+                process.env.REFRESH_TOKEN,
+                { expiresIn: '14d' }
+            )
 
             // LƯU REFRESH TOKEN VÀO MẢNG
             refreshTokens.push(newRefreshToken)
@@ -232,7 +248,7 @@ class AuthController {
 
             user.password = hashPassword
             user.passwordResetToken = undefined
-            user.passwordChangedAt = Date.now()
+            user.passwordChangeAt = Date.now()
             user.passwordResetExpires = undefined
 
             await user.save()
