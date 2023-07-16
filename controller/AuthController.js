@@ -2,7 +2,7 @@ const User = require('../model/User')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
-const sendMail = require('../untils/sendMail')
+const sendMail = require('../utils/sendMail')
 require('dotenv').config()
 
 
