@@ -126,7 +126,7 @@ class AuthController {
             return res.status(403).json('Refresh token is not valid')
         }
 
-        jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, user) => {
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, user) => {
             if (err) {
                 return res.status(403).json(err)
             }
