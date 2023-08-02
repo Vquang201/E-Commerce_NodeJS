@@ -22,16 +22,6 @@ var Blog = new mongoose.Schema({
         default: 0,
     },
 
-    isLikes: {
-        type: Boolean,
-        default: false
-    },
-
-    isDisliked: {
-        type: Boolean,
-        default: false
-    },
-
     likes: [
         {
             type: mongoose.Types.ObjectId,
@@ -43,6 +33,16 @@ var Blog = new mongoose.Schema({
         {
             type: mongoose.Types.ObjectId,
             ref: 'User'
+        }
+    ],
+
+    comments: [
+        {
+            userId: {
+                type: mongoose.Types.ObjectId,
+                ref: 'User',
+            },
+            content: String
         }
     ],
 

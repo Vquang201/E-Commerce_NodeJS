@@ -1,6 +1,4 @@
 const User = require('../model/User')
-
-
 class UserController {
 
     // [Get] / users/ 
@@ -15,6 +13,53 @@ class UserController {
         }
     }
 
+    //[GET]/users/history-like
+    async getHistoryLikeOfUser(req, res) {
+        try {
+            const { _id } = req.user
+            const user = await User.findById({ _id })
+                .select('historyLiked')
+                .populate({ path: 'historyLiked.blogId', select: 'title' })
+            return res.status(200).json({ mess: user })
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
+
+    //[GET]/users/wishlist
+    async getWishList(req, res) {
+        try {
+            const { _id } = req.user
+            const user = await User.findById({ _id })
+                .select('wishlist')
+                .populate({ path: 'wishlist', select: 'title price description brand' })
+            return res.status(200).json({ mess: user })
+
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
+
+    //[POST]/users/wishlist
+    async addWishList(req, res) {
+        try {
+            const { pid } = req.body
+            const { _id } = req.user
+            //check user đã yêu thích sản phẩm hay chưa
+            const user = await User.findById({ _id })
+            const wishList = user?.wishlist.find(e => e.toString() === pid)
+
+            if (wishList) {
+                return res.status(403).json({ mess: 'This Product Has Been Favourite' })
+            } else {
+                await User.findByIdAndUpdate({ _id }, { $push: { wishlist: pid } })
+            }
+
+            return res.status(200).json({ mess: 'Add Wish Product Successfully !' })
+        } catch (error) {
+            return res.status(500).json({ error })
+        }
+    }
 
     //[PUT] /update-user
     async updateUser(req, res) {

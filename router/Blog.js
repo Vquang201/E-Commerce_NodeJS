@@ -11,6 +11,7 @@ router.put('/update-blog/:id', [verifyToken, isAdmin, uploadCloudinary.single('i
 router.delete('/delete-blog/:id', [verifyToken, isAdmin], BlogController.deleteBlog)
 router.post('/like-blog', verifyToken, BlogController.likeBlog)
 router.post('/dislike-blog', verifyToken, BlogController.disLikeBlog)
+router.post('/comment-blog', verifyToken, BlogController.commentBlog)
 
 
 module.exports = router

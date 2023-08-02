@@ -48,6 +48,15 @@ var User = new mongoose.Schema({
         type: String
     },
 
+    historyLiked: [
+        {
+            blogId: {
+                type: mongoose.Types.ObjectId,
+                ref: "Blog"
+            },
+        }
+    ],
+
     wishlist: [
         {
             type: mongoose.Types.ObjectId,

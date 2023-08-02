@@ -1,4 +1,5 @@
 const Blog = require('../model/Blog')
+const User = require('../model/User')
 
 class BlogController {
 
@@ -25,8 +26,6 @@ class BlogController {
             res.status(500).json({ mess: error })
         }
     }
-
-
 
     //[GET] /blogs/get-view/:id
     async getViewBlog(req, res) {
@@ -131,6 +130,7 @@ class BlogController {
         try {
             const { blogId } = req.body
             const { _id } = req.user
+            console.log(_id);
             const blog = await Blog.findById({ _id: blogId })
 
             //check user đã like hay chưa 
@@ -147,9 +147,13 @@ class BlogController {
             if (userLiked) {
                 // Hủy like
                 await Blog.findByIdAndUpdate(blogId, { $pull: { likes: _id } })
+                // xóa history like của user
+                await User.findByIdAndUpdate({ _id }, { $pull: { historyLiked: { blogId } } })
             } else {
                 // thêm like
                 await Blog.findByIdAndUpdate(blogId, { $push: { likes: _id } })
+                // thêm vào history like của user
+                await User.findByIdAndUpdate({ _id }, { $push: { historyLiked: { blogId } } })
             }
 
             res.status(200).json({ mess: 'Like successfully' })
@@ -189,6 +193,24 @@ class BlogController {
             res.status(500).json({ mess: error })
         }
     }
+
+    // [POST]/blogs/comment-blog
+    async commentBlog(req, res) {
+        try {
+            const { bid, comment } = req.body
+            const { _id } = req.user
+
+            await Blog.findByIdAndUpdate(
+                { _id: bid },
+                { $push: { comments: { userId: _id, content: comment } } }
+            )
+
+            res.status(200).json({ mess: 'comment successfully!!' })
+        } catch (error) {
+            res.status(500).json({ mess: error })
+        }
+    }
+
 }
 
 module.exports = new BlogController
