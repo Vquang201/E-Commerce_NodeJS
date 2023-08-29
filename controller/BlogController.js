@@ -15,7 +15,7 @@ class BlogController {
 
     async getBlog(req, res) {
         try {
-            const { blogId } = req.body
+            const blogId = req.params.id
 
             const blog = await Blog.findByIdAndUpdate({ _id: blogId }, { $inc: { numberViews: 1 } })
                 .populate({ path: 'likes', select: 'lastname' })
