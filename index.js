@@ -3,6 +3,10 @@ const app = express()
 const db = require('./config')
 const cookieParser = require('cookie-parser')
 const route = require('./router')
+const dotenv = require('dotenv')
+dotenv.config()
+
+const PORT = process.env.PORT
 
 
 //connect db
@@ -15,6 +19,6 @@ app.use(express.urlencoded({ extended: true }))
 
 route(app)
 
-app.listen(8000, () => {
-    console.log('Server is running ...')
+app.listen(PORT || 8000, () => {
+    console.log('Server is running Port', PORT)
 })
