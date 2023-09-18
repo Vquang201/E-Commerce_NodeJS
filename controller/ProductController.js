@@ -50,7 +50,7 @@ class ProductController {
     async createProduct(req, res) {
         try {
             if (Object.keys(req.body).length === 0) {
-                if (req.file.path) {
+                if (req.file?.path) {
                     cloudinary.uploader.destroy(req.file.filename, (err, result) => {
                         if (err) {
                             console.log({ err: err })
@@ -70,7 +70,7 @@ class ProductController {
             res.status(200).json(product)
 
         } catch (error) {
-            if (req.file.path) {
+            if (req.file?.path) {
                 cloudinary.uploader.destroy(req.file.filename, (err, result) => {
                     if (err) {
                         console.log({ err: err })
