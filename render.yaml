@@ -1,10 +1,8 @@
 services:
   - name: app
     env:
-      - key: mongodb://127.0.0.1:27017/E-Commerce
-        fromDatabase:
-          name: E-Commerce
-          type: mongodb
+      - key: MONGODB_URI
+        value: mongodb://localhost:27017/E-Commerce
     buildCommand: npm install
     startCommand: npm start
 databases:
